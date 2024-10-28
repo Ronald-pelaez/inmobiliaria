@@ -24,7 +24,7 @@ jobs:
       - name: obtener tareas de Jira y actualizar la version
         env:
           JIRA_DOMAIN: 'https://ronaldpelaez201.atlassian.net'
-          JIRA_USER: 'ronaldpelaez201'
+          JIRA_USER: 'Ronald Peláez'
         run: |
           jira_tickets=$(curl -s -X GET \
             -H "Content-Type: application/json" \
