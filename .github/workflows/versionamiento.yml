@@ -1,0 +1,39 @@
+name: versionamiento automatico con Jira
+
+on:
+  push:
+    branches:
+        -main
+
+jobs:
+  version:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checar el repositorio
+        uses: actions/checkout@v2
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: instalar dependencias
+        run: npm install
+
+      - name: obtener tareas de Jira y actualizar la version
+        env:
+          JIRA_DOMAIN: 'https://ronaldpelaez201.atlassian.net'
+          JIRA_USER: 'ronaldpelaez201'
+        run: |
+          jira_tickets=$(curl -s -X GET \
+            -H "Content-Type: application/json" \
+            "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=INMO AND status=Done&fields=key,summary")
+
+          version_message="Versión Automática - Incluye: "
+          for ticket in $(echo "$jira_tickets" | jq -r '.issues[] | .key'); do
+            version_message+="$ticket, "
+          done
+
+          npm version patch -m "$version_message"
+          git push --follow-tags
