@@ -26,7 +26,7 @@ jobs:
           $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
           $JIRA_USER = 'ronaldpelaez201@gmail.com' 
           
-          $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=SCRUM AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
+          $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=projects=SCRUM AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
 
           $version_message = "Versión Automática - Incluye: "
           foreach ($ticket in $jira_tickets.issues) {
