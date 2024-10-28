@@ -24,7 +24,7 @@ jobs:
       - name: Obtener tareas de Jira y actualizar la versión
         run: |
           $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
-          $JIRA_USER = 'Ronald Peláez' 
+          $JIRA_USER = 'ronaldpelaez201@gmail.com' 
           
           # Realizar la solicitud a Jira
           $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=SCRUM AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
