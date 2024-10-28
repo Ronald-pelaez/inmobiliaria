@@ -26,7 +26,6 @@ jobs:
           $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
           $JIRA_USER = 'ronaldpelaez201@gmail.com' 
           
-          # Realizar la solicitud a Jira
           $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=SCRUM AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
 
           $version_message = "Versión Automática - Incluye: "
