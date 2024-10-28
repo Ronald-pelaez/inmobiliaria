@@ -1,4 +1,4 @@
-name: Versionamiento Automático con Jira
+name: versionamiento automatico con Jira
 
 on:
   push:
@@ -22,19 +22,17 @@ jobs:
         run: npm install
 
       - name: Obtener tareas de Jira y actualizar la versión
-        env:
-          JIRA_DOMAIN: 'ronaldpelaez201.atlassian.net/'
-          JIRA_USER: 'Ronald Peláez'
         run: |
-          jira_tickets=$(curl -s -X GET \
-            -H "Content-Type: application/json" \
-            "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=INMO AND status=Done&fields=key,summary")
+          $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
+          $JIRA_USER = 'Ronald Peláez' 
+          
+          # Realizar la solicitud a Jira
+          $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=INMO AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
 
-          version_message="Versión Automática - Incluye: "
-          for ticket in $(echo "$jira_tickets" | jq -r '.issues[] | .key'); do
-            version_message+="$ticket, "
-          done
+          $version_message = "Versión Automática - Incluye: "
+          foreach ($ticket in $jira_tickets.issues) {
+            $version_message += "$($ticket.key), "
+          }
 
-          # Incrementar la versión y agregar el mensaje de versión
-          npm version patch -m "$version_message"
+          npm version patch -m $version_message
           git push --follow-tags
