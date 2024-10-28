@@ -1,9 +1,9 @@
-name: versionamiento automatico con Jira
+name: Versionamiento Automático con Jira
 
 on:
   push:
     branches:
-        -main
+      - main
 
 jobs:
   version:
@@ -18,12 +18,12 @@ jobs:
         with:
           node-version: '14'
 
-      - name: instalar dependencias
+      - name: Instalar dependencias
         run: npm install
 
-      - name: obtener tareas de Jira y actualizar la version
+      - name: Obtener tareas de Jira y actualizar la versión
         env:
-          JIRA_DOMAIN: 'https://ronaldpelaez201.atlassian.net'
+          JIRA_DOMAIN: 'ronaldpelaez201.atlassian.net/'
           JIRA_USER: 'Ronald Peláez'
         run: |
           jira_tickets=$(curl -s -X GET \
@@ -35,5 +35,6 @@ jobs:
             version_message+="$ticket, "
           done
 
+          # Incrementar la versión y agregar el mensaje de versión
           npm version patch -m "$version_message"
           git push --follow-tags
