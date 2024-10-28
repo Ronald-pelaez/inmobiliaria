@@ -1,0 +1,45 @@
+name: Versionado Automático con Jira
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checar el repositorio
+        uses: actions/checkout@v2
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Obtener tareas de Jira y actualizar la versión
+        env:
+          JIRA_DOMAIN: 'ronaldpelaez201.atlassian.net'
+          JIRA_USER: 'ronaldpelaez201'
+        run: |
+          # 1. Obtener tickets de Jira sin autenticación (asegúrate de que no requiera autenticación en tu configuración de Jira)
+          jira_tickets=$(curl -s -X GET \
+            -H "Content-Type: application/json" \
+            "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=INMO AND status=Done&fields=key,summary" )
+
+          # 2. Generar mensaje de versión con los tickets de Jira
+          version_message="Versión Automática - Incluye: "
+          for ticket in $(echo "$jira_tickets" | jq -r '.issues[] | .key'); do
+            version_message+="$ticket, "
+          done
+
+          # 3. Incrementa la versión y agrega el mensaje de versión
+          npm version patch -m "$version_message"
+          git push --follow-tags
+
+      - name: Actualizar documentación en GitBook
+        run: |
+          # Verifica que GitBook esté sincronizado con el repositorio para actualizarse automáticamente.
