@@ -33,7 +33,7 @@ jobs:
         run: |
           set AUTH_HEADER=Authorization: Bearer %GITBOOK_TOKEN%
           set CONTENT_TYPE=Content-Type: application/json
-          set BODY={"title":"Documentación para la versión %VERSION%","description":"Actualización a la versión %VERSION%","status":"published"}
+          set BODY={"title":"Documentación para la versión %version%","description":"Actualización a la versión %version%","status":"published"}
 
           curl -X PUT "https://api.gitbook.com/v1/spaces/eh4kfckVJvaoAnc26l7N/documents/2MQHVPylci67MSGgaNm5" ^
           -H "%AUTH_HEADER%" ^
