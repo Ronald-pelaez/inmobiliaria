@@ -42,8 +42,7 @@ jobs:
           }
 
           # Realiza la solicitud POST para crear la página
-          $response = Invoke-RestMethod -Uri $url -Method POST -Headers $headers -Body $body
-
+          $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body
           # Muestra la respuesta en la consola para verificación
           Write-Output "Response from GitBook API:"
           Write-Output $response
