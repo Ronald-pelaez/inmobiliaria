@@ -1,38 +1,43 @@
-name: GitBook Versioning Automation
+name: GitBook Version Release Sync
 
 on:
-  push:
-    branches:
-      - main 
+  release:
+    types: [published]
 
 jobs:
-  api_request:
+  sync_version_with_gitbook:
     runs-on: windows-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Run API request using PowerShell
+      - name: Create GitBook Version Change Request
         shell: pwsh
         run: |
           $url = "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/change-requests"
           $token = "gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV"
 
+          # Obtener la versión y el título del release desde el evento de GitHub
+          $versionName = "${{ github.event.release.tag_name }}"
+          $description = "${{ github.event.release.body }}"
+          
+          # Establecer los encabezados y el cuerpo de la solicitud
           $headers = @{
               "Authorization" = "Bearer $token"
               "Content-Type" = "application/json"
           }
 
-          # Datos para la solicitud POST
+          # Crear el cuerpo de la solicitud para GitBook con versión y descripción
           $body = @{
-              "name" = "New Version"  # Nombre de la versión
-              "description" = "This is the description of the new version."  # Descripción opcional
-              "version" = "1.0.0"  # Número de versión, ajústalo según tu sistema de versionamiento
+              "name" = "Release: $versionName"
+              "description" = $description
+              "version" = $versionName
+              "status" = "pending"
           } | ConvertTo-Json
 
-          # Hacer la solicitud POST para crear un cambio de versión
+          # Enviar la solicitud POST a GitBook
           $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body
 
-          # Mostrar la respuesta en la consola
+          # Mostrar la respuesta en la consola para verificar si fue exitoso
           Write-Output "Response from GitBook API:"
           Write-Output $response
