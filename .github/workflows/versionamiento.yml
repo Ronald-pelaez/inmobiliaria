@@ -1,37 +1,32 @@
-name: versionamiento automatico con Jira
+name: Actualizar versión en GitBook
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'  # Detecta etiquetas de versión en el formato v1.0.0, v2.1.0, etc.
 
 jobs:
-  version:
-    runs-on: windows-latest
+  deploy_gitbook:
+    runs-on: windows-latest  # Especifica el entorno de Windows
 
     steps:
-      - name: Checar el repositorio
+      - name: Configurar Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Clonar el repositorio
         uses: actions/checkout@v2
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Obtener tareas de Jira y actualizar la versión
+      - name: Publicar en GitBook
+        env:
+          GITBOOK_TOKEN: ${{ secrets.GITBOOK_TOKEN }}
         run: |
-          $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
-          $JIRA_USER = 'ronaldpelaez201@gmail.com' 
-          
-          $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=projects=SCRUM AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
+          set VERSION=$(git describe --tags)  # Obtiene la última etiqueta de versión
+          echo Version: %VERSION%
 
-          $version_message = "Versión Automática - Incluye: "
-          foreach ($ticket in $jira_tickets.issues) {
-            $version_message += "$($ticket.key), "
-          }
-
-          npm version patch -m $version_message
-          git push --follow-tags
+          # Llamada a la API de GitBook para actualizar la versión
+          curl -X POST https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/documents ^
+            -H "Authorization: Bearer %GITBOOK_TOKEN%" ^
+            -H "Content-Type: application/json" ^
+            -d "{\"title\": \"Versión %VERSION%\", \"description\": \"Documentación actualizada para la versión %VERSION%\", \"status\": \"published\"}"
