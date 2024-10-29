@@ -1,4 +1,4 @@
-name: GitBook API Request
+name: GitBook Versioning Automation
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Run API request using PowerShell
         shell: pwsh
         run: |
-          $url = "https://api.gitbook.com/v1/user"
+          $url = "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/change-requests"
           $token = "gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV"
 
           $headers = @{
@@ -23,7 +23,15 @@ jobs:
               "Content-Type" = "application/json"
           }
 
-          $response = Invoke-RestMethod -Uri $url -Method Get -Headers $headers
+          # Datos para la solicitud POST
+          $body = @{
+              "name" = "New Version"  # Nombre de la versión
+              "description" = "This is the description of the new version."  # Descripción opcional
+              "version" = "1.0.0"  # Número de versión, ajústalo según tu sistema de versionamiento
+          } | ConvertTo-Json
+
+          # Hacer la solicitud POST para crear un cambio de versión
+          $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body
 
           # Mostrar la respuesta en la consola
           Write-Output "Response from GitBook API:"
