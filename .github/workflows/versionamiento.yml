@@ -1,41 +1,21 @@
-name: Actualizar versión en GitBook
+name: Actualizar Documento en GitBook
 
 on:
   push:
-    tags:
-      - 'v*.*.*'  # Detecta etiquetas de versión en el formato v1.0.0, v2.1.0, etc.
+    branches:
+      - main
 
 jobs:
-  deploy_gitbook:
-    runs-on: windows-latest  # Especifica el entorno de Windows
-
+  update_gitbook_document:
+    runs-on: windows-latest
     steps:
-      - name: Configurar Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Clonar el repositorio
-        uses: actions/checkout@v2
-
-      - name: Obtener la versión
-        shell: cmd
-        id: get_version
-        run: |
-          for /f "tokens=*" %%i in ('git describe --tags') do set version=%%i
-          echo Versión: %version%
-          echo "::set-output name=version::%version%"
-
-      - name: Publicar en GitBook usando cmd
-        env:
-          GITBOOK_TOKEN: ${{ secrets.GITBOOK_TOKEN }}
+      - name: Ejecutar script de actualización
         shell: cmd
         run: |
-          set AUTH_HEADER=Authorization: Bearer %GITBOOK_TOKEN%
-          set CONTENT_TYPE=Content-Type: application/json
-          set BODY={"title":"Documentación para la versión %version%","description":"Actualización a la versión %version%","status":"published"}
+          set DOCUMENT_ID=2MQHVPylci67MSGgaNm5
+          set API_URL=https://api.gitbook.com/v1/spaces/2MQHVPylci6/documents/%DOCUMENT_ID%
+          set DATA={"status":"published","version":"1.0","title":"Nueva Versión del Documento","content":"Este es el contenido actualizado del documento."}
 
-          curl -X PUT "https://api.gitbook.com/v1/spaces/eh4kfckVJvaoAnc26l7N/documents/2MQHVPylci67MSGgaNm5" ^
-          -H "%AUTH_HEADER%" ^
-          -H "%CONTENT_TYPE%" ^
-          -d "%BODY%"
+          curl -X PUT "%API_URL%" ^
+          -H "Content-Type: application/json" ^
+          -d "%DATA%"
