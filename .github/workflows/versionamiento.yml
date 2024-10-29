@@ -1,4 +1,4 @@
-name: Update GitBook with GitHub Release
+name: subir release a gitbook
 
 on:
   release:
@@ -8,10 +8,10 @@ jobs:
   update_gitbook:
     runs-on: windows-latest
     steps:
-      - name: Check out the repository
+      - name: validar repositorio
         uses: actions/checkout@v2
 
-      - name: Post Release Information to GitBook
+      - name: publicar informacion en gitbook
         env:
           GITBOOK_TOKEN: gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV
         shell: pwsh
@@ -19,8 +19,7 @@ jobs:
           # Obtén la información del release desde GitHub Actions context
           $releaseName = "${{ github.event.release.name }}"
           $releaseBody = "${{ github.event.release.body }}"
-          $spaceId = "2MQHVPylci67MSGgaNm5"
-          $url = "https://api.gitbook.com/v1/spaces/$spaceId/change-requests"
+          $url = "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/change-requests"
 
           # Estructura del JSON para crear una nueva página
           $body = @{
