@@ -25,8 +25,8 @@ jobs:
           set VERSION=$(git describe --tags)  # Obtiene la última etiqueta de versión
           echo Version: %VERSION%
 
-          # Llamada a la API de GitBook para actualizar la versión
+          # Ejecuta el comando curl en formato JSON para GitBook
           curl -X POST https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/documents ^
-            -H "Authorization: Bearer %GITBOOK_TOKEN%" ^
-            -H "Content-Type: application/json" ^
-            -d "{\"title\": \"Versión %VERSION%\", \"description\": \"Documentación actualizada para la versión %VERSION%\", \"status\": \"published\"}"
+            -H Authorization: Bearer %GITBOOK_TOKEN% ^
+            -H Content-Type: application/json ^
+            -d "{""title"": ""Versión %VERSION%"", ""description"": ""Documentación actualizada para la versión %VERSION%"", ""status"": ""published""}"
