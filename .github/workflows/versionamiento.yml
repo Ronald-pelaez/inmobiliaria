@@ -20,7 +20,7 @@ jobs:
           $releaseName = "${{ github.event.release.name }}"
           $releaseBody = "${{ github.event.release.body }}"
           $spaceId = "2MQHVPylci67MSGgaNm5"
-          $url = "https://api.gitbook.com/v1/spaces/$spaceId/content"
+          $url = "https://api.gitbook.com/v1/spaces/$spaceId/change-requests"
 
           # Estructura del JSON para crear una nueva página
           $body = @{
