@@ -18,15 +18,24 @@ jobs:
       - name: Clonar el repositorio
         uses: actions/checkout@v2
 
-      - name: Publicar en GitBook
+      - name: Publicar en GitBook usando PowerShell
         env:
           GITBOOK_TOKEN: ${{ secrets.GITBOOK_TOKEN }}
+        shell: pwsh
         run: |
-          set VERSION=$(git describe --tags)  # Obtiene la última etiqueta de versión
-          echo Version: %VERSION%
+          $version = git describe --tags
+          Write-Output "Version: $version"
 
-          # Ejecuta el comando curl en formato JSON para GitBook
-          curl -X POST https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/documents ^
-            -H Authorization: Bearer %GITBOOK_TOKEN% ^
-            -H Content-Type: application/json ^
-            -d "{""title"": ""Versión %VERSION%"", ""description"": ""Documentación actualizada para la versión %VERSION%"", ""status"": ""published""}"
+          # Define los encabezados y el contenido JSON para la solicitud
+          $headers = @{
+              Authorization = "Bearer $env:GITBOOK_TOKEN"
+              "Content-Type" = "application/json"
+          }
+          $body = @{
+              title = "Versión $version"
+              description = "Documentación actualizada para la versión $version"
+              status = "published"
+          } | ConvertTo-Json
+
+          # Envía la solicitud HTTP POST a GitBook
+          Invoke-RestMethod -Uri "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/documents" -Method Post -Headers $headers -Body $body
