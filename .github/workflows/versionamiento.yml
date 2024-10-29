@@ -1,43 +1,50 @@
-name: GitBook Version Release Sync
+name: Update GitBook with GitHub Release
 
 on:
   release:
     types: [published]
 
 jobs:
-  sync_version_with_gitbook:
+  update_gitbook:
     runs-on: windows-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Create GitBook Version Change Request
+      - name: Post Release Information to GitBook
+        env:
+          GITBOOK_TOKEN: gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV
         shell: pwsh
         run: |
-          $url = "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/change-requests"
-          $token = "gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV"
+          # Obtén la información del release desde GitHub Actions context
+          $releaseName = "${{ github.event.release.name }}"
+          $releaseBody = "${{ github.event.release.body }}"
+          $spaceId = "2MQHVPylci67MSGgaNm5"
+          $url = "https://api.gitbook.com/v1/spaces/$spaceId/content"
 
-          # Obtener la versión y el título del release desde el evento de GitHub
-          $versionName = "${{ github.event.release.tag_name }}"
-          $description = "${{ github.event.release.body }}"
-          
-          # Establecer los encabezados y el cuerpo de la solicitud
+          # Estructura del JSON para crear una nueva página
+          $body = @{
+              "title" = "Release: $releaseName"
+              "description" = "Detalles del Release en GitHub: $releaseBody"
+              "blocks" = @(
+                  @{
+                      "type" = "markdown"
+                      "data" = @{
+                          "text" = "# $releaseName`n`n$releaseBody"
+                      }
+                  }
+              )
+          } | ConvertTo-Json -Depth 3
+
+          # Encabezados para la autenticación y tipo de contenido
           $headers = @{
-              "Authorization" = "Bearer $token"
-              "Content-Type" = "application/json"
+              "Authorization" = "Bearer $env:GITBOOK_TOKEN"
+              "Content-Type"  = "application/json"
           }
 
-          # Crear el cuerpo de la solicitud para GitBook con versión y descripción
-          $body = @{
-              "name" = "Release: $versionName"
-              "description" = $description
-              "version" = $versionName
-              "status" = "pending"
-          } | ConvertTo-Json
+          # Realiza la solicitud POST para crear la página
+          $response = Invoke-RestMethod -Uri $url -Method POST -Headers $headers -Body $body
 
-          # Enviar la solicitud POST a GitBook
-          $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body
-
-          # Mostrar la respuesta en la consola para verificar si fue exitoso
+          # Muestra la respuesta en la consola para verificación
           Write-Output "Response from GitBook API:"
           Write-Output $response
