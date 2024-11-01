@@ -1,0 +1,16 @@
+{
+  "name": "inmobiliaria",
+  "version": "1.0.0",
+  "description": "\"# inmobiliaria\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commit": "npx mswebco"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mswebco": "^1.1.0"
+  }
+}
