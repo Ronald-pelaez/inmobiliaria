@@ -1,38 +1,48 @@
-name: versionamiento automatico con Jira
+name: subir release a gitbook
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
-  version:
+  update_gitbook:
     runs-on: windows-latest
-
     steps:
-      - name: Checar el repositorio
+      - name: validar repositorio
         uses: actions/checkout@v2
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Obtener tareas de Jira y actualizar la versión
+      - name: publicar informacion en gitbook
+        env:
+          GITBOOK_TOKEN: gb_api_6nkWp1nowtq8GjpYqwD8WXjeEl1JGDNXceS4LvNV
+        shell: pwsh
         run: |
-          $JIRA_DOMAIN = 'ronaldpelaez201.atlassian.net'
-          $JIRA_USER = 'Ronald Peláez' 
-          
-          # Realizar la solicitud a Jira
-          $jira_tickets = Invoke-RestMethod -Uri "https://$JIRA_DOMAIN/rest/api/3/search?jql=project=INMO AND status=Done&fields=key,summary" -Method Get -ContentType "application/json"
+          # Obtén la información del release desde GitHub Actions context
+          $releaseName = "${{ github.event.release.name }}"
+          $releaseBody = "${{ github.event.release.body }}"
+          $url = "https://api.gitbook.com/v1/spaces/2MQHVPylci67MSGgaNm5/change-requests"
 
-          $version_message = "Versión Automática - Incluye: "
-          foreach ($ticket in $jira_tickets.issues) {
-            $version_message += "$($ticket.key), "
+          # Estructura del JSON para crear una nueva página
+          $body = @{
+              "title" = "Release: $releaseName"
+              "description" = "Detalles del Release en GitHub: $releaseBody"
+              "blocks" = @(
+                  @{
+                      "type" = "markdown"
+                      "data" = @{
+                          "text" = "# $releaseName`n`n$releaseBody"
+                      }
+                  }
+              )
+          } | ConvertTo-Json -Depth 3
+
+          # Encabezados para la autenticación y tipo de contenido
+          $headers = @{
+              "Authorization" = "Bearer $env:GITBOOK_TOKEN"
+              "Content-Type"  = "application/json"
           }
 
-          npm version patch -m $version_message
-          git push --follow-tags
+          # Realiza la solicitud POST para crear la página
+          $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body
+          # Muestra la respuesta en la consola para verificación
+          Write-Output "Response from GitBook API:"
+          Write-Output $response
