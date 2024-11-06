@@ -4,28 +4,21 @@
   "description": "\"# inmobiliaria\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "commit": "npx mswebco"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ronald-pelaez/inmobiliaria.git"
-},
-  "keywords": [],
-  "author": "",
+    "url": "git+https://github.com/Ronald-pelaez/inmobiliaria.git"
+  },
+  "keywords": [
+    "[\"inmobiliaria\"",
+    "\"real-estate\"",
+    "\"API\"]"
+  ],
+  "author": "ronald pelaez",
   "license": "ISC",
-  "dependencies": {
-    "mswebco": "^1.1.0"
+  "bugs": {
+    "url": "https://github.com/Ronald-pelaez/inmobiliaria/issues"
   },
-  "devDependencies": {
-    "@semantic-release/git": "^10.0.1",
-    "commitizen": "^4.3.1",
-    "cz-conventional-changelog": "^3.3.0",
-    "semantic-release": "^24.2.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  }
+  "homepage": "https://github.com/Ronald-pelaez/inmobiliaria#readme"
 }
