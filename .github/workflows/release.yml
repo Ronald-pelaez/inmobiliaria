@@ -11,8 +11,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-lates
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,8 +24,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      - run: npm ci
+      - run: npm run build
 
+        
       - name: Run semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
