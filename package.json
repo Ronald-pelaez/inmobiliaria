@@ -1,9 +1,10 @@
 {
   "name": "inmobiliaria",
   "version": "1.0.0",
-  "description": "\"# inmobiliaria\"",
-  "main": "index.php",
+  "description": "este es un ejemplo de el versionaod automatico",
+  "main": "index.js",
   "scripts": {
+    "build": "node esbuild.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,7 +13,7 @@
   },
   "keywords": [],
   "author": "ronald pelaez",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "mswebco": "^1.1.0"
   },
