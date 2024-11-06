@@ -11,7 +11,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    runs-on: ubuntu-latest   # Corregido aquí
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -25,9 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - run: npm ci
-      - run: npm run build
 
       - name: Run semantic-release
         env:
