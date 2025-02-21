@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Comentarios - Documentación</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f8fa;
+        }
+        .container {
+            max-width: 100%;
+            padding: 10px;
+        }
+        .header {
+            background-color: #0366d6;
+            color: white;
+            padding: 15px;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 2px;
+        }
+        .comment-button {
+            display: block;
+            background-color: #2ea44f;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            transition: background-color 0.2s;
+        }
+        .comment-button:hover {
+            background-color: #22863a;
+        }
+        .issues-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e1e4e8;
+            border-radius: 0 0 5px 5px;
+            background-color: white;
+        }
+        .page-id {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3 id="page-title">Comentarios sobre la documentación</h3>
+        </div>
+        <a id="new-comment-link" class="comment-button" href="https://github.com/TU-USUARIO/doc-comments/issues/new" target="_blank">Agregar un nuevo comentario</a>
+        <iframe id="issues-frame" class="issues-container" src="https://github.com/TU-USUARIO/doc-comments/issues"></iframe>
+    </div>
+    <span id="page-id" class="page-id"></span>
+
+    <script>
+        // Detectar la página desde la que se está embebiendo
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        window.onload = function() {
+            // Obtener el identificador de página
+            const pageId = getQueryParam('page') || 'general';
+            document.getElementById('page-id').textContent = pageId;
+            
+            // Actualizar el título
+            const pageTitle = pageId.replace(/-/g, ' ');
+            document.getElementById('page-title').textContent = 
+                `Comentarios: ${pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1)}`;
+            
+            // Actualizar el enlace para nuevo comentario
+            const commentLink = document.getElementById('new-comment-link');
+            commentLink.href = `https://github.com/Ronald-pelaez/doc-comments/issues/new?title=Comentario: ${pageTitle}&labels=${pageId}&body=Por favor comparte tu comentario sobre esta sección de la documentación.`;
+            
+            // Actualizar el iframe de issues filtrado por etiqueta
+            const issuesFrame = document.getElementById('issues-frame');
+            issuesFrame.src = `https://github.com/Ronald-pelaez/doc-comments/issues?q=is:issue+label:${pageId}`;
+        }
+    </script>
+</body>
+</html>
